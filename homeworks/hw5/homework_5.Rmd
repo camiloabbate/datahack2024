@@ -1,0 +1,158 @@
+---
+title: "Homework 5: PDF Extracting with Regular Expressions"
+author: "" 
+output: pdf_document
+header-includes:
+  - \newcommand{\magenta}[1]{\textcolor{magenta}{#1}}
+  - \usepackage{xcolor}
+  - \usepackage{float}
+urlcolor: blue
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F, fig.pos = 'H')
+knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
+library(tidyverse) 
+library(kableExtra)
+library(pdftools)
+library(here)
+library(lubridate)
+```
+
+## Assignment
+
+In this homework assignment, you will be scraping text from a crime-log. The goal of the homework assignment is to completely scrape the PDF into a cleaned tibble ready for analysis. While we obviously cannot do analysis with such a small amount of data, you could imagine scaling this up by looping through multiple PDFs. You will need to be somewhat familiar with regular expressions to do this homework assignment. If you need a refresher (as many of us do), the R for Data Science Textbook and the Guided Exercises are a great reference. Extracting PDFs requires a mastery of the `tidyr::extract` function.
+
+
+## Coding Assignment 
+
+0. Save the pdf you downloaded from Gauchospace as `1-20-16.pdf`. 
+
+1. Import the PDF using the `pdftools::pdf_text` function. Save the text as \magenta{crime\_log}.
+```{r}
+crime_log <- pdf_text("homework_assignments/homework_5/1-20-16.pdf")
+```
+
+2. Using `stringr::str_split`, `base::unlist`, `stringr::str_trim`, and `stringr:str_to_lower` put the PDF text into a vector that has 1 line of the PDF for each element. See this [resource](https://michaeltopper.netlify.app/post/extracting-data-from-pdf-to-table/) (apologies for my shameful self-promoting) if you need a reference. Save this as a vector named \magenta{crime\_log\_text}.
+```{r}
+crime_log_text <- crime_log %>% 
+  str_split("\n") %>% 
+  unlist() %>% 
+  str_trim() %>% 
+  str_to_lower()
+```
+
+3. We need to create vectors that have the indexes of the text lines that we want to extract information from. The following sub-questions will all be similar in nature. In later homework, you will see that we could reduce our amount of time coding (and potential mistakes) by creating a general function for this task.
+    a) Create a vector named \magenta{date\_reported\_indices} using `stringr::str_detect` and `base::which` that is a vector of the indices that begin with the words "date reported".
+    b) Create a vector named \magenta{location\_indices} using `stringr::str_detect` and `base::which` that is a vector of the indices that begin with the words "general location".
+    c) Create a vector named \magenta{date\_occurred\_from\_indices} using `stringr::str_detect` and `base::which` that is a vector of the indices that begin with the words "date occurred from".
+    d) Create a vector named \magenta{date\_occurred\_to_indices} using `stringr::str_detect` and `base::which` that is a vector of the indices that begin with the words "date occurred to".
+    e) Create a vector named \magenta{incident\_indices} using `stringr::str_detect` and `base::which` that is a vector of the indices that begin with the words "incident".
+    f) Create a vector named \magenta{disposition\_indices} using `stringr::str_detect` and `base::which` that is a vector of the indices that begin with the word "disposition".
+    g) Create a vector named \magenta{modified\_indices} using `stringr::str_detect` and `base::which` that is a vector of the indices that begin with the word "modified".
+```{r}
+date_reported_indices <- crime_log_text %>% 
+  str_detect("^date reported") %>% which
+
+location_indicies <- crime_log_text %>% 
+  str_detect("^general location") %>% which
+
+date_occurred_from_indice <- crime_log_text %>% 
+  str_detect("^date occurred from") %>% which
+
+date_occurred_to_indice <- crime_log_text %>% 
+  str_detect("^date occurred to") %>% which
+
+incident_indices <- crime_log_text %>% 
+  str_detect("^incident") %>% which
+
+dispostion_indices <- crime_log_text %>% 
+  str_detect("^disposition") %>% which
+
+modified_indices <- crime_log_text %>% 
+  str_detect("^modified") %>% which
+```
+
+4. Now we need to extract our desired information into tibbles using the `tibble::as_tibble` and `tidyr::extract` function. As with Question 3, you will be doing the same sort of process each time, but really just changing the regular expression in the `tidyr::extract` function. Remember, if you need help, check out this [tutorial](https://michaeltopper.netlify.app/post/extracting-data-from-pdf-to-table/) (self-promoting shame once more). The following are ordered by what should be easiest to hardest regular expressions.
+
+    a) Extract a tibble using the \magenta{disposition\_indices} vector in conjuction with \magenta{crime\_log\_text}. Assign the tibble the name \magenta{disposition}. Your tibble should look like Table \ref{tab:disposition}.
+    
+```{r disposition}
+disposition <- crime_log_text[dispostion_indices] %>% 
+  as_tibble() %>% 
+  extract(value, "disposition","disposition:\\s(.{1,})")
+kable(disposition, booktabs = T, caption = "Final tibble for 4a.") %>% 
+  kable_styling(latex_options = "hold_position")
+```
+    b) Extract a tibble using the \magenta{location\_indices} vector in conjuction with \magenta{crime\_log\_text}. Assign the tibble the name \magenta{location}. Your tibble should look like Table \ref{tab:location}.
+    
+```{r location}
+location <- crime_log_text[location_indicies] %>% 
+  as_tibble() %>% 
+  extract(value, "location", ".{1,}:(.{1,})") %>% 
+  mutate(location = location %>% str_trim())
+kable(location, booktabs = T, caption = "Final tibble for 4b") %>% 
+  kable_styling(latex_options = "hold_position")
+```
+    c) Extract a tibble using the \magenta{incident\_indices} vector in conjuction with \magenta{crime\_log\_text}. Assign the tibble the name \magenta{incident}. Your tibble should look like Table \ref{tab:incident}.
+    
+```{r incident}
+incident <- crime_log_text[incident_indices] %>% 
+  as_tibble() %>% 
+  extract(value, "incident", ".{1,}\\s{2,}(.{1,})")
+kable(incident, booktabs = T, caption = "Final tibble for 4c.") %>% 
+  kable_styling(latex_options = "hold_position")
+```
+    d) Extract a tibble using the \magenta{modified\_indices} vector in conjuction with \magenta{crime\_log\_text}. Assign the tibble the name \magenta{modified}. Your tibble should look like Table \ref{tab:modified}.
+    
+```{r}
+modified <- crime_log_text[modified_indices] %>% 
+  as_tibble() %>% 
+  extract(value, c('modified_date', 'modified_time'), "(\\d\\d/\\d\\d/\\d\\d).{1,}(\\d\\d:\\d\\d)")
+kable(modified, booktabs = T, caption = "Final tibble for 4d.") %>% 
+  kable_styling(latex_options = "hold_position")
+```
+    e) Extract a tibble using the \magenta{date\_occurred\_from\_indices} vector in conjuction with \magenta{crime\_log\_text}. Assign the tibble the name \magenta{date\_occurred\_from}. Your tibble should look like Table \ref{tab:dateoccurredfrom}.
+    
+```{r dateoccurredfrom}
+date_occurred_from <- crime_log_text[date_occurred_from_indice] %>% 
+  as_tibble() %>% 
+  extract(value, c('date_occurred_from', 'time_occurred_from'), "(\\d\\d/\\d\\d/\\d\\d).{1,}(\\d\\d:\\d\\d)")
+kable(date_occurred_from, booktabs = T, caption = "Final tibble for 4e.") %>% 
+  kable_styling(latex_options = "hold_position")
+```
+    f) Extract a tibble using the \magenta{date\_occurred\_to\_indices} vector in conjuction with \magenta{crime\_log\_text}. Assign the tibble the name \magenta{date\_occurred\_to}. Your tibble should look like Table \ref{tab:dateoccurredto}.
+    
+```{r dateoccurredto}
+date_occurred_to <- crime_log_text[date_occurred_to_indice] %>% 
+  as_tibble() %>% 
+  extract(value, c('date_occurred_to', 'time_occurred_to'),"(\\d\\d/\\d\\d/\\d\\d).{1,}(\\d\\d:\\d\\d)")
+
+kable(date_occurred_to, booktabs = T, caption = "Final tibble for 4f.") %>% 
+  kable_styling(latex_options = "hold_position")
+```
+    g) Extract a tibble using the \magenta{date\_reported\_indices} vector in conjuction with \magenta{crime\_log\_text}. Assign the tibble the name \magenta{date\_reported}. Your tibble should look like Table \ref{tab:datereported}.
+    
+```{r datereported}
+date_reported <- crime_log_text[date_reported_indices] %>% 
+  as_tibble() %>% 
+  extract(value, c("date_reported", "time_reported", "report_number"),   "(\\d{1,2}/\\d{1,2}/\\d{1,2}).{1,}(\\d\\d:\\d\\d).{1,}(\\d{6})")
+kable(date_reported, booktabs = T, caption = "Final tibble for 4g.") %>% 
+  kable_styling(latex_options = "hold_position")
+```
+
+
+5. Using `dplyr::bind_cols`, bind together each of the tibbles created in Question 4. Save this new tibble as \magenta{final\_crime\_log}.
+
+```{r}
+final_crime_log <- bind_cols(date_reported, date_occurred_from, date_occurred_to,
+                             incident, location, disposition, modified)
+```
+
+6. Using the `lubridate` function, change the `date_reported`, `date_occurred_from`, and `date_occurred_to` columns to be of standard format: YYYY-MM-DD. Attempt to do this using `dplyr::across`, as mastering this function can save a lot of time. Save the updated tibble as \magenta{final\_crime\_log\_cleaned}.
+```{r}
+final_crime_log <- final_crime_log %>%
+  mutate(across(starts_with("date"), ~mdy(.)))
+```

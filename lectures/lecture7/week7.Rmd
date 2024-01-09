@@ -1,0 +1,55 @@
+---
+title: "Week 7 Exercises"
+author: "Data Hack 2022"
+date: "05/13/2022"
+output:
+    pdf_document:
+    highlight: haddock
+    number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Programming and functions.
+
+The goal of today's class is to learn about `for loop`, `if else`, `lapply` and use them in the context of importing data.
+You can find the messy script of today's class in GauchoSpace.
+
+#Exercises
+
+## 1) Create a function that is the quadratic formula, i.e., you input the coefficients of a quadratic function and the code returns the roots.
+
+Something like: If you have the equation $ax^2 + bx + c = 0$, the code will give you:
+
+$\dfrac{- b + \sqrt{b^2 - 4ac}}{2a}$ and  $\dfrac{- b - \sqrt{b^2 - 4ac}}{2a}$
+
+## 2) (tricky) Create a function that gives you the n-th fibonnaci number, where $n < 16$
+
+## 3) (trickier) Create a function that gives you the n-th fibonnaci number.
+
+## 4) Spend sometime analyzing and understanding the following function:
+
+```{r}
+big_import <- function(full_path){
+  thenames <- "enrollment_" #Just change this part if you want a different name
+  if (typeof(full_path)!="character"){
+    print("Wrong, argument needs to be a character")
+  }
+  else {
+    f_listy <- list.files(full_path)
+    f_listy2 = paste0(full_path,"/",f_listy)
+    f_list_data <- lapply(f_listy2,read_excel)
+    f_how_long <- length(f_list_data)
+    for (i in 1:f_how_long) {
+      assign(paste0(thenames, i+2001), as.data.frame(list_data[[i]]),envir = .GlobalEnv)
+    }
+  }
+}
+```
+
+
+
+
+
