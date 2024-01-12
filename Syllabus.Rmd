@@ -21,7 +21,7 @@ editor_options:
 
 Effective policy is backed by data. This course will focus on developing the tools necessary to complete a research project which will result in a final presentation where students will convince a panel of professors/industry leaders why policy makers should focus on a particular issue. 
 
-Students will be *randomized* into small groups (3-5) at the beginning of the quarter. Each group will be responsible for one final presentation at the end of the quarter which will provide evidence for the following question: what issue should be prioritized by California's policy makers and why? This issue can be social, environmental, or political, but it is necessary that the issue's importance be grounded by data. Hence, while it is important to choose a topic of interest, it is also important to choose a topic of feasibility. As an example, rising crime rates may be a topic of particular concern. Data is readily available through police departments and Open Data Portals provided by major cities. Using this data your team would work together on cleaning/analyzing the data to create a presentation that could convince a policy maker to prioritize the rising crime rates. Some questions you may want to answer are: why are crime rates rising? Where are crime rates rising (e.g., urban/suburban/rural)? What is a possible solution? What is the cost/benefit analysis of your solution?
+Students will be *randomized* into small groups (3-5) after the second week of class. Each group will be responsible for one final presentation at the end of the quarter which will provide evidence for the following question: what issue should be prioritized by California's policy makers and why? This issue can be social, environmental, or political, but it is necessary that the issue's importance be grounded by data. Hence, while it is important to choose a topic of interest, it is also important to choose a topic of feasibility. As an example, rising crime rates may be a topic of particular concern. Data is readily available through police departments and Open Data Portals provided by major cities. Using this data your team would work together on cleaning/analyzing the data to create a presentation that could convince a policy maker to prioritize the rising crime rates. Some questions you may want to answer are: why are crime rates rising? Where are crime rates rising (e.g., urban/suburban/rural)? What is a possible solution? What is the cost/benefit analysis of your solution?
 
 ## Learning Objectives
 
@@ -58,12 +58,14 @@ Note that topics can be excluded/extended based on student interest. In particul
   + Topics (R): R and RStudio. Libraries. Data types (characters/strings/logicals), importing data (excel/csv emphasis), common statistics (mean/sd/var), introduction to piping with mutating variables/summarizing/filtering/renaming.
   + Topics (Organization): Rprojects for file path management/collaboration, naming variables (e.g. snake_case and informative), the importance of READMEs, coding etiquette (leaving spaces, commenting etc.). 
 
-* **Week 2 (January 19): Continuation of Cleaning, **
+\newpage
+
+* **Week 2 (January 19): More Data Cleaning **
   + Topics (R): Grouping, further filtering with conditions, cleaning dates with `lubridate`.  
   + Topics (Organization): Using RMarkdown for reproducible documents.
 
 * **Week 3 (January 26): Visualization with ggplot2**
-  + Topics (R): ggplot2 grammar of graphics, facet wraps, aesthetic mappings, reasons to use ggplot2. Plotting heatmaps, using fill, colours. If time allows: `usmap`, `sf` packages.
+  + Topics (R): ggplot2 grammar of graphics, facet wraps, aesthetic mappings, reasons to use ggplot2. Plotting heat maps, using fill, colours. If time allows: `usmap` and `sf` packages.
   
 * **Week 4 (February 02): Merging and reshaping data **  
   + Topics (R): Reshaping data with `tidyr`, `pivot_wider` and `pivot_longer`. Merging using left join, right join, inner join, rbind, cbind and alternatives.
